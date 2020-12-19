@@ -22,7 +22,7 @@ docker run -p 8080:8080 -v github-stars-vol  github-stars-server
 
 ## Tests
 ```
-docker build -t github-stars-server-test . && docker run -p 8080:8080 -v github-stars-vol  github-stars-server-test
+docker build -t github-stars-server-test . && docker run github-stars-server-test
 ```
 
 ## Endpoints
