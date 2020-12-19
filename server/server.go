@@ -26,16 +26,20 @@ type StarGazerResponse struct {
 func main() {
 	router := gin.Default()
 
-	router.POST("/stars", starGazerPOST)
+	router.POST(StarGazerRequestEndpoint, starGazerPOST)
 
-	_ = router.Run(":8080")
+	_ = router.Run(ServerAddress)
 }
 
 func starGazerPOST(c *gin.Context) {
 	var starGazerRequest StarGazerRequest
-	_ = c.BindJSON(&starGazerRequest)
+	err := c.BindJSON(&starGazerRequest)
 
-	processRepositories(c, starGazerRequest)
+	if err != nil || len(starGazerRequest.Repositories) == 0 {
+		c.JSON(400, gin.H{"Error": JSONFormatErrorMessage})
+	} else {
+		processRepositories(c, starGazerRequest)
+	}
 }
 
 func processRepositories(c *gin.Context, request StarGazerRequest) {
@@ -58,19 +62,19 @@ func findStarCount(repository string, client *github.Client, response *StarGazer
 	var result StarGazerResult
 	result.Repository = repository
 
-	ownerRepoSplit := strings.Split(repository, "/")
+	ownerRepoSplit := strings.Split(repository, OwnerRepoSeparator)
 
-	if len(ownerRepoSplit) == 2 {
+	if len(ownerRepoSplit) == OwnerRepoStringSplitLength {
 		repo, _, err := client.Repositories.Get(context.Background(), ownerRepoSplit[0], ownerRepoSplit[1])
 
 		if err != nil {
-			result.ErrorMessage = "There was an error fetching this repository information from GitHub"
+			result.ErrorMessage = GitHubErrorMessage
 		} else {
 			result.Count = *repo.StargazersCount
 		}
 
 	} else {
-		result.ErrorMessage = "Invalid repository format.  Name must contain an owner and repo separated by a '/'"
+		result.ErrorMessage = RepositoryFormatErrorMessage
 	}
 
 	response.TotalCount += result.Count
