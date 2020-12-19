@@ -24,14 +24,18 @@ type StarGazerResponse struct {
 }
 
 func main() {
+	// Run the API on port 8080
+	_ = initializeServer().Run(ServerAddress)
+}
+
+func initializeServer() *gin.Engine {
 	// Set up a default gin router
 	router := gin.Default()
 
 	// Initiate the /stars endpoint
 	router.POST(StarGazerRequestEndpoint, starGazerPOST)
 
-	// Run the API on port 8080
-	_ = router.Run(ServerAddress)
+	return router
 }
 
 func starGazerPOST(c *gin.Context) {

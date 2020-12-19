@@ -4,7 +4,7 @@
 The server for the GitHub Stars application, written in Go.  This application allows users
 to pass in a list of "\<organization>/\<repository>" strings to a REST endpoint, receiving the total number
 of stars for each repository in response.  Upon running, a HTTP server is launched on port 8080, allowing the user to 
-make requests to the `/stars` endpoint.
+make POST requests to `localhost:8080/stars`.
 
 [Gin](https://github.com/gin-gonic/gin) is used as the HTTP framework for building the API, and
 [go-github](https://github.com/google/go-github) is used to interface with the GitHub API.
