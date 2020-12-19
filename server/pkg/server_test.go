@@ -36,7 +36,7 @@ func TestBaseStarsEndpoint(t *testing.T) {
 
 	// Verify the content-type is JSON
 	if val[0] != "application/json; charset=utf-8" {
-		t.Fatalf("Expected \"application/json; charset=utf-8\", but received %s", val[0])
+		t.Fatalf("Expected 'application/json; charset=utf-8', but received %s", val[0])
 	}
 }
 
