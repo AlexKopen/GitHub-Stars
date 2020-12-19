@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  github-star-server:
+    build: .
+    ports:
+      - 8080:8080
+    command: ./out/github-stars
