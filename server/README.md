@@ -6,18 +6,23 @@ to pass in a list of "\<organization>/\<repository>" strings to a REST endpoint,
 of stars for each repository in response.  Upon running, a HTTP server is launched on port 8080, allowing the user to 
 make requests to the `/stars` endpoint.
 
-[Gin](https://github.com/gin-gonic/gin#api-examples) is used as the HTTP framework, and
+[Gin](https://github.com/gin-gonic/gin) is used as the HTTP framework, and
 [go-github](https://github.com/google/go-github) is used to interface with the GitHub API.
 
 ## Building
 ```
-docker build -t github-stars-server .
+docker build --target server-build -t github-stars-server .
 ```
 
 ## Running
 Start the server at `localhost:8080`
 ```
 docker run -p 8080:8080 -v github-stars-vol  github-stars-server
+```
+
+## Tests
+```
+docker build -t github-stars-server-test . && docker run -p 8080:8080 -v github-stars-vol  github-stars-server-test
 ```
 
 ## Endpoints
@@ -78,11 +83,6 @@ Sending an invalid payload will result in the following 400 response:
 {
     "Error": "Invalid JSON format in request."
 }
-```
-
-## Tests
-```
-go test
 ```
 
 ## Data Models
