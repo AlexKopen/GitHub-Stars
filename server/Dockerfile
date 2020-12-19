@@ -1,5 +1,6 @@
 FROM golang:1.15.6
 
+VOLUME /github-stars-vol
 WORKDIR /github-stars
 
 COPY . .

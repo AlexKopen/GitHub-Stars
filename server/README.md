@@ -17,7 +17,7 @@ docker build -t github-stars-server .
 ## Running
 Start the server at `localhost:8080`
 ```
-docker run -p 8080:8080 github-stars-server
+docker run -p 8080:8080 -v github-stars-vol  github-stars-server
 ```
 
 ## Endpoints
