@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -27,6 +28,11 @@ type StarGazerResponse struct {
 }
 
 func main() {
+	// CLI arguments to suppress error messages.  False by default.
+	suppressErrorsPtr := flag.Bool("suppress", false, "Suppressing client errors")
+	flag.Parse()
+	suppressErrors := *suppressErrorsPtr
+
 	// Create a new buffered reader for user input
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println(WelcomeMessage)
@@ -39,7 +45,7 @@ func main() {
 		userInput = strings.Replace(userInput, "\n", "", -1)
 
 		// Send the input off for validation
-		validInputs := generateValidInputs(userInput)
+		validInputs := generateValidInputs(userInput, suppressErrors)
 
 		// Process any available valid inputs
 		if len(validInputs) > 0 {
@@ -54,7 +60,7 @@ func main() {
 	}
 }
 
-func generateValidInputs(input string) []string {
+func generateValidInputs(input string, suppressErrors bool) []string {
 	// Trim leading and trailing whitespace
 	input = strings.TrimSpace(input)
 
@@ -70,7 +76,9 @@ func generateValidInputs(input string) []string {
 		repository = strings.TrimSpace(repository)
 		splitRepositoryName := strings.Split(repository, "/")
 		if len(splitRepositoryName) != 2 {
-			fmt.Printf("\n%s %s.  %s\n", InvalidRepo, repository, InvalidRepoSlashError)
+			if !suppressErrors {
+				fmt.Printf("\n%s %s.  %s\n", InvalidRepo, repository, InvalidRepoSlashError)
+			}
 			continue
 		}
 
@@ -79,7 +87,9 @@ func generateValidInputs(input string) []string {
 		splitRepositoryName[1] = strings.TrimSpace(splitRepositoryName[1])
 
 		if len(splitRepositoryName[0]) < 1 || len(splitRepositoryName[1]) < 1 {
-			fmt.Printf("\n%s %s.  %s\n", InvalidRepo, repository, InvalidRepoNameError)
+			if !suppressErrors {
+				fmt.Printf("\n%s %s.  %s\n", InvalidRepo, repository, InvalidRepoNameError)
+			}
 			continue
 		}
 
@@ -112,7 +122,11 @@ func processInput(validInputs []string) string {
 
 	// Convert the response body to a star gazer response struct
 	starGazerResponse := StarGazerResponse{}
-	_ = json.Unmarshal(responseData, &starGazerResponse)
+	responseParsingError := json.Unmarshal(responseData, &starGazerResponse)
+	if responseParsingError != nil {
+		fmt.Printf("\n%s\n", ResponseParseError)
+		return ""
+	}
 
 	// There are no valid results, don't return the response
 	if len(starGazerResponse.StarGazerResults) == 0 {
