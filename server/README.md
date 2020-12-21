@@ -9,6 +9,11 @@ make POST requests to `localhost:8080/stars`.
 [Gin](https://github.com/gin-gonic/gin) is used as the HTTP framework for building the API, and
 [go-github](https://github.com/google/go-github) is used to interface with the GitHub API.
 
+## Using with Docker compose
+```
+docker-compose up
+```
+
 ## Building
 ```
 docker build --target server-build -t github-stars-server .

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  github-stars-server:
+    build:
+      context: .
+      target: server-build
+    ports:
+      - 8080:8080
+    volumes:
+    - .:/github-stars-vol
+    command: ./out/github-stars
