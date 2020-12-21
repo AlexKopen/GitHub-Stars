@@ -32,7 +32,7 @@ docker build -t github-stars-server-test . && docker run github-stars-server-tes
 
 ## Endpoints
 ```
-POST api/v1/stars
+POST /api/v1/stars
 ```
 
 **Example Request Payload:**
