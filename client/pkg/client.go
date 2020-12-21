@@ -39,11 +39,22 @@ func main() {
 		userInput = strings.Replace(userInput, "\n", "", -1)
 
 		// Send the input off for validation
-		validateInput(userInput)
+		validInputs := generateValidInputs(userInput)
+
+		// Process any available valid inputs
+		if len(validInputs) > 0 {
+			output := processInput(validInputs)
+
+			// Print the results
+			if len(output) > 0 {
+				fmt.Println("\nRESULTS:")
+				fmt.Printf("\n%s\n", output)
+			}
+		}
 	}
 }
 
-func validateInput(input string) {
+func generateValidInputs(input string) []string {
 	// Trim leading and trailing whitespace
 	input = strings.TrimSpace(input)
 
@@ -76,38 +87,39 @@ func validateInput(input string) {
 		validInputs = append(validInputs, repository)
 	}
 
-	// Process any available valid inputs
-	if len(validInputs) > 0 {
-		processInput(validInputs)
-	}
+	return validInputs
 }
 
-func processInput(validInputs []string) {
+func processInput(validInputs []string) string {
 	// Create a new request payload
 	starGazerRequest := StarGazerRequest{Repositories: validInputs}
 
 	requestBodyJSON, _ := json.Marshal(starGazerRequest)
 
 	//	Call the API running on the server
-	resp, serverRequestErr := http.Post(ServerURL, "application/json", bytes.NewBuffer(requestBodyJSON))
+	resp, serverRequestErr := http.Post(ServerStarsEndpointURL, "application/json", bytes.NewBuffer(requestBodyJSON))
 	if serverRequestErr != nil {
 		fmt.Printf("\n%s\n", ServerRequestError)
-		return
+		return ""
 	}
 
 	// Read the response data
 	responseData, bodyReadErr := ioutil.ReadAll(resp.Body)
 	if bodyReadErr != nil {
 		fmt.Printf("\n%s\n", ServerParseError)
-		return
+		return ""
 	}
 
-	// Convert the response to a response struct
+	// Convert the response body to a star gazer response struct
 	starGazerResponse := StarGazerResponse{}
 	_ = json.Unmarshal(responseData, &starGazerResponse)
 
-	// Format the output and print
+	// There are no valid results, don't return the response
+	if len(starGazerResponse.StarGazerResults) == 0 {
+		return ""
+	}
+
+	// Format the output
 	formattedOutput, _ := json.MarshalIndent(starGazerResponse, "", "\t")
-	fmt.Println("\nRESULTS:")
-	fmt.Printf("\n%s\n", string(formattedOutput))
+	return string(formattedOutput)
 }
