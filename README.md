@@ -1,5 +1,5 @@
 # GitHub Stars
-A program to determine how many stars any given list of github repositories has received.  This repository contains
+A program to determine how many stars any given list of GitHub repositories has received.  This repository contains
 both a client and server, each written in go.
 
 ## Running
