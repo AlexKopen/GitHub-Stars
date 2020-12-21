@@ -6,7 +6,7 @@ to pass in a list of "\<organization>/\<repository>" strings via a cli, outputti
 of stars for each repository in response.
 
 ## Running
-To start the client in a terminal:
+With the server running at `localhost:8080`, to start the client in a terminal:
 ```
 cd pkg && go run .
 ```
