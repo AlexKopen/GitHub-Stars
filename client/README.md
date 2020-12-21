@@ -11,7 +11,7 @@ With the server running at `localhost:8080`, to start the client in a terminal:
 cd pkg && go run .
 ```
 ### CLI Arguments
-To run the client with error messages suppressed, set the `suppressed` flag to true:
+To run the client with error messages suppressed, set the `suppress` flag to true:
 ```
 cd pkg && go run . -suppress=true
 ```
