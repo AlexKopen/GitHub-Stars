@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -28,68 +27,86 @@ type StarGazerResponse struct {
 }
 
 func main() {
+	// Create a new buffered reader for user input
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("GitHub Stargazer application started")
+	fmt.Println(WelcomeMessage)
 
+	// Iterate infinitely to process each individual input
 	for {
-		fmt.Println("\nEnter a list of <organization>/<repository> inputs, separated by commas. Example - angular/angular, twilio/twilio-python:\n")
+		fmt.Printf("\n%s\n", InstructionMessage)
+		// Process the user's input after enter is pressed, stripping any new lines
 		userInput, _ := reader.ReadString('\n')
 		userInput = strings.Replace(userInput, "\n", "", -1)
 
-		inputValidation(userInput)
-
+		// Send the input off for validation
+		validateInput(userInput)
 	}
-
 }
 
-func inputValidation(input string) {
+func validateInput(input string) {
 	// Trim leading and trailing whitespace
 	input = strings.TrimSpace(input)
+
+	// Split the input by commas
 	splitInputs := strings.Split(input, ",")
 
+	// Only process valid inputs
 	var validInputs []string
+
+	// For each repository, determine whether the format is valid
 	for _, repository := range splitInputs {
+		// Check to make sure the input contains a slash
 		repository = strings.TrimSpace(repository)
 		splitRepositoryName := strings.Split(repository, "/")
 		if len(splitRepositoryName) != 2 {
-			fmt.Printf("\nInvalid repository name: %s.  Name must contain exactly one '/'.  This input will not be processed.\n", repository)
+			fmt.Printf("\n%s %s.  %s\n", InvalidRepo, repository, InvalidRepoSlashError)
 			continue
 		}
 
+		// Check to make sure input is entered for both the organization and repository
 		splitRepositoryName[0] = strings.TrimSpace(splitRepositoryName[0])
 		splitRepositoryName[1] = strings.TrimSpace(splitRepositoryName[1])
 
 		if len(splitRepositoryName[0]) < 1 || len(splitRepositoryName[1]) < 1 {
-			fmt.Printf("\nInvalid repository name: %s.  The organization and repository must contain valid alphanumeric characters.  This input will not be processed.\n", repository)
+			fmt.Printf("\n%s %s.  %s\n", InvalidRepo, repository, InvalidRepoNameError)
 			continue
 		}
 
+		// If all conditions have passed, add the repository to the list of valid inputs
 		validInputs = append(validInputs, repository)
 	}
 
+	// Process any available valid inputs
 	if len(validInputs) > 0 {
 		processInput(validInputs)
 	}
-
 }
 
 func processInput(validInputs []string) {
-	//	Call the API
+	// Create a new request payload
 	starGazerRequest := StarGazerRequest{Repositories: validInputs}
 
-	url := "http://localhost:8080/stars"
-	jsonValue, _ := json.Marshal(starGazerRequest)
+	requestBodyJSON, _ := json.Marshal(starGazerRequest)
 
-	resp, _ := http.Post(url, "application/json", bytes.NewBuffer(jsonValue))
-
-	responseData, bodyReadErr := ioutil.ReadAll(resp.Body)
-	if bodyReadErr != nil {
-		log.Fatal(bodyReadErr)
+	//	Call the API running on the server
+	resp, serverRequestErr := http.Post(ServerURL, "application/json", bytes.NewBuffer(requestBodyJSON))
+	if serverRequestErr != nil {
+		fmt.Printf("\n%s\n", ServerRequestError)
+		return
 	}
 
+	// Read the response data
+	responseData, bodyReadErr := ioutil.ReadAll(resp.Body)
+	if bodyReadErr != nil {
+		fmt.Printf("\n%s\n", ServerParseError)
+		return
+	}
+
+	// Convert the response to a response struct
 	starGazerResponse := StarGazerResponse{}
 	_ = json.Unmarshal(responseData, &starGazerResponse)
 
+	// Format the output and print
 	formattedOutput, _ := json.MarshalIndent(starGazerResponse, "", "\t")
 	fmt.Println("\nRESULTS:")
 	fmt.Printf("\n%s\n", string(formattedOutput))
