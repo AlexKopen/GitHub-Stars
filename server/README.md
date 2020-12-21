@@ -83,7 +83,7 @@ POST /api/v1/stars
 ```
 
 ## Error Handling
-Making requests to any endpoint other than `\stars` will result in a 404 response.  Sending an invalid JSON string in the request body will result in the following 400 response:
+Making requests to any endpoint other than a POST `/api/v1/stars` will result in a 404 response.  Sending an invalid JSON string in the request body will result in the following 400 response:
 ```json
 {
     "Error": "Invalid JSON format in request."
