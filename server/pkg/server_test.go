@@ -38,6 +38,16 @@ func TestBaseStarsEndpoint(t *testing.T) {
 	if val[0] != "application/json; charset=utf-8" {
 		t.Fatalf("Expected 'application/json; charset=utf-8', but received %s", val[0])
 	}
+
+	//	Ensure the total count is greater than 0
+	responseData, _ := ioutil.ReadAll(resp.Body)
+	starGazerResponse := StarGazerResponse{}
+	_ = json.Unmarshal(responseData, &starGazerResponse)
+
+	// There are no valid results, don't return the response
+	if starGazerResponse.TotalCount <= 0 {
+		t.Fatalf("Expected the count to be greater than 0, but instead received a count of: %d", starGazerResponse.TotalCount)
+	}
 }
 
 func TestStarsEndpointInvalidPayload(t *testing.T) {
