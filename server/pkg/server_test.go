@@ -16,7 +16,7 @@ func TestBaseStarsEndpoint(t *testing.T) {
 	defer ts.Close()
 
 	// Call the API with a payload known to be successful
-	resp, err := http.Post(fmt.Sprintf("%s/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(SuccessfulRequest)))
+	resp, err := http.Post(fmt.Sprintf("%s/api/v1/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(SuccessfulRequest)))
 
 	// Verify there was no error calling the endpoint
 	if err != nil {
@@ -55,7 +55,7 @@ func TestStarsEndpointInvalidPayload(t *testing.T) {
 	defer ts.Close()
 
 	// Call using an invalid payload
-	resp, err := http.Post(fmt.Sprintf("%s/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(InvalidPayloadRequest)))
+	resp, err := http.Post(fmt.Sprintf("%s/api/v1/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(InvalidPayloadRequest)))
 
 	if err != nil {
 		t.Errorf("Expected a succecssful request, but received the following error: %v", err)
@@ -72,7 +72,7 @@ func TestStarsEndpointRepositoryFormatErrorMessage(t *testing.T) {
 	defer ts.Close()
 
 	// Call using an invalid <organization>/<repository> format
-	resp, err := http.Post(fmt.Sprintf("%s/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(RepositoryFormatErrorMessageRequest)))
+	resp, err := http.Post(fmt.Sprintf("%s/api/v1/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(RepositoryFormatErrorMessageRequest)))
 
 	if err != nil {
 		t.Fatalf("Expected a succecssful request, but received the following error: %v", err)
@@ -100,7 +100,7 @@ func TestStarsEndpointNonExistentGitHubRepoErrorMessage(t *testing.T) {
 	defer ts.Close()
 
 	// Call using a non-existent repository
-	resp, err := http.Post(fmt.Sprintf("%s/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(NonExistentGithubRepoErrorMessagesRequest)))
+	resp, err := http.Post(fmt.Sprintf("%s/api/v1/stars", ts.URL), "application/json", bytes.NewBuffer([]byte(NonExistentGithubRepoErrorMessagesRequest)))
 
 	if err != nil {
 		t.Fatalf("Expected a succecssful request, but received the following error: %v", err)

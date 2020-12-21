@@ -2,7 +2,7 @@ package main
 
 const (
 	ServerAddress              string = ":8080"
-	StarGazerRequestEndpoint   string = "/stars"
+	StarGazerRequestEndpoint   string = "/api/v1/stars"
 	OwnerRepoSeparator         string = "/"
 	OwnerRepoStringSplitLength int    = 2
 )
