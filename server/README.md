@@ -109,23 +109,23 @@ type StarGazerResponse struct {
 ```
 
 ## Minikube
-To run this docker image locally using [minikube](https://minikube.sigs.k8s.io/docs/), follow these steps:
-1. Set your local minikube environment to use images produced by docker
+To run this Docker image locally using [minikube](https://minikube.sigs.k8s.io/docs/), follow these steps:
+1. Set your local minikube environment to use images produced by Docker:
 ```
 eval $(minikube docker-env)
 ```
 
-2. Build the docker image using the build instructions above.  After, run the image as a pod.
+2. Build the Docker image using the build instructions above.  After, run the image as a pod while exposing port `8080`:
 ```
 kubectl run github-stars-pod --image=github-stars-server --port=8080 --image-pull-policy=Never
 ```
 
-3. View the running pods
+3. View the running pod:
 ```
 kubectl get pods -o wide
 ```
 
-or view the pods in a web application dashboard
+or view the pod in a web application dashboard:
 ```
 minikube dashboard
 ```
